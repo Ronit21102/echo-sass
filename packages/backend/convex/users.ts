@@ -2,7 +2,7 @@ import { mutation, query } from "./_generated/server.js";
 
 export const getMany = query({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx:any) => {
     const users = await ctx.db.query("users").collect();
     return users;
   },
@@ -10,7 +10,7 @@ export const getMany = query({
 
 export const add = mutation({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx:any) => {
     const identity = await ctx.auth.getUserIdentity();
     
     if (!identity) {
@@ -20,6 +20,8 @@ export const add = mutation({
     if (!orgId) {
       throw new Error("Must be in an organization to add a user");
     }
+
+    throw new Error("tracking test")
     const userId = await ctx.db.insert("users", {
       name: "Khaman",
     });

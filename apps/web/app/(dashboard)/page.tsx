@@ -20,8 +20,7 @@ export default function Page() {
         <p>app/web</p>
         <UserButton></UserButton>
         <OrganizationSwitcher hidePersonal={true} />
-        <Button onClick={() => addUser()}>Add User</Button>
-        <div className="max-w-sm w-full mx-auto">{JSON.stringify(users)}</div>
+        <Button className="cursor-pointer" onClick={() => addUser()}>Add User</Button>
       </div>
       <p>Must be signed in to view this content </p>
       <SignInButton>Sign in:</SignInButton>
