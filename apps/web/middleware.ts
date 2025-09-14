@@ -1,15 +1,29 @@
-import { clerkMiddleware ,createRouteMatcher} from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)", // Sign in page
-  "/sign-up(.*)", // Sign up page
+  "/sign-in(.*)", // Sign in page and all sub-routes
+  "/sign-out(.*)", // Sign up page and all sub-routes
+]);
+
+const isOrgFreeRoute = createRouteMatcher([
+  "/sign-up(.*)", // Sign up page and all sub-routes
+  "/sign-in(.*)", // Sign in page and all sub-routes
+  "/org-selection(.*)", // Home page
 ]);
 export default clerkMiddleware(async (auth, req) => {
-  // If the user is not authenticated and is not on a public route, redirect to sign-in page
-  const {userId} = await auth();
-
-  if(!isPublicRoute(req)){
+  const {userId , orgId} = await auth();
+  if (!isPublicRoute(req)) {
     await auth.protect();
+  }
+
+  if(userId && !orgId && !isOrgFreeRoute(req)){
+    const searchParams = new URLSearchParams({ redirectUrl: req.url });
+
+    const orgSelection = new URL(
+      `/org-selection?${searchParams.toString()}`, req.url
+    );
+    return NextResponse.redirect(orgSelection);
   }
 });
 

@@ -11,9 +11,14 @@ export const getMany = query({
 export const add = mutation({
   args: {},
   handler: async (ctx) => {
-    const identity = ctx.auth.getUserIdentity();
+    const identity = await ctx.auth.getUserIdentity();
+    
     if (!identity) {
       throw new Error("Must be signed in to add a user");
+    }
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new Error("Must be in an organization to add a user");
     }
     const userId = await ctx.db.insert("users", {
       name: "Khaman",
